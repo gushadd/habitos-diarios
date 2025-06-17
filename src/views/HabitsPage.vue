@@ -1,41 +1,61 @@
 <template>
   <section class="tw:flex tw:flex-col tw:gap-3 tw:mt-3">
     <WeekDayHabits
-      day="Segunda-Feira"
-      :habits="habitsStore.habits.filter((habit) => habit.days.includes('monday'))"
+      displayDayName="Segunda-Feira"
+      day="monday"
+      :habits="filterHabitsByWeekDay('monday')"
     />
     <WeekDayHabits
-      day="Terça-Feira"
-      :habits="habitsStore.habits.filter((habit) => habit.days.includes('tuesday'))"
+      displayDayName="Terça-Feira"
+      day="tuesday"
+      :habits="filterHabitsByWeekDay('tuesday')"
     />
     <WeekDayHabits
-      day="Quarta-Feira"
-      :habits="habitsStore.habits.filter((habit) => habit.days.includes('wednesday'))"
+      displayDayName="Quarta-Feira"
+      day="wednesday"
+      :habits="filterHabitsByWeekDay('wednesday')"
     />
     <WeekDayHabits
-      day="Quinta-Feira"
-      :habits="habitsStore.habits.filter((habit) => habit.days.includes('thursday'))"
+      displayDayName="Quinta-Feira"
+      day="thursday"
+      :habits="filterHabitsByWeekDay('thursday')"
     />
     <WeekDayHabits
-      day="Sexta-Feira"
-      :habits="habitsStore.habits.filter((habit) => habit.days.includes('friday'))"
+      displayDayName="Sexta-Feira"
+      day="friday"
+      :habits="filterHabitsByWeekDay('friday')"
     />
     <WeekDayHabits
-      day="Sábado"
-      :habits="habitsStore.habits.filter((habit) => habit.days.includes('saturday'))"
+      displayDayName="Sábado"
+      day="saturday"
+      :habits="filterHabitsByWeekDay('saturday')"
     />
     <WeekDayHabits
-      day="Domingo"
-      :habits="habitsStore.habits.filter((habit) => habit.days.includes('sunday'))"
+      displayDayName="Domingo"
+      day="sunday"
+      :habits="filterHabitsByWeekDay('sunday')"
     />
   </section>
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
+import { onMounted } from "vue";
 import { useHabitsStore } from "@/stores/habitsStore";
 
 import WeekDayHabits from "../components/WeekDayHabits.vue";
 
 const habitsStore = useHabitsStore();
+
+const filterHabitsByWeekDay = (weekDay) => {
+  const weekDayHabits = habitsStore.habits.filter((habit) => habit.days.includes(weekDay));
+  weekDayHabits.forEach((habit) => {
+    habit.completed = habit.completions[weekDay]?.completed ?? false;
+  });
+
+  return weekDayHabits;
+};
+
+onMounted(() => {
+  habitsStore.loadHabitsFromStorage();
+});
 </script>

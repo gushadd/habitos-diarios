@@ -46,6 +46,7 @@ import { RouterLink, useRouter } from "vue-router";
 import { reactive, ref } from "vue";
 import { useHabitsStore } from "@/stores/habitsStore";
 import * as yup from "yup";
+import { getWeekNumber } from "@/utils/dateUtils";
 
 const habitsStore = useHabitsStore();
 const router = useRouter();
@@ -81,8 +82,24 @@ const saveHabit = async () => {
   const isValid = await validateForm();
   if (!isValid) return;
 
-  habitsStore.addHabit(newHabit);
+  const habit = {
+    id: crypto.randomUUID(),
+    ...newHabit,
+    completions: Object.fromEntries(newHabit.days.map((day) => [day, { completed: false }])),
+    lastUpdatedWeek: getWeekNumber(),
+  };
+
+  console.log(habit);
+
+  habitsStore.addHabit(habit);
   isSnackbarActive.value = true;
+
+  Object.assign(newHabit, {
+    name: "",
+    timeBegin: "",
+    timeEnd: "",
+    days: [],
+  });
 
   router.push("/");
 
